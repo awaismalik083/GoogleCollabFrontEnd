@@ -7,6 +7,34 @@ import { SiGoogledrive, SiGithub } from "react-icons/si";
 import { preview, useNoteBookStorage } from "../Context/PreviewContext";
 import NotebookManager from "./NotebookManager";
 
+const handleCreateNotebook = async () => {
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/notebooks`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ title: "Untitled Notebook" }),
+    });
+
+    if (!res.ok) {
+      const errData = await res.json();
+      console.error("Failed to create notebook:", errData.message);
+      return;
+    }
+
+    const data = await res.json();
+    const id = data.notebook.id; // matches your controller's response shape
+
+    router.push(`/notebook/${id}`);
+  } catch (error) {
+    console.error("Error creating notebook:", error);
+  }
+};
+
 const exampleNotebooks = [
   {
     icon: <span className="text-blue-700 font-bold text-lg">CO</span>,
@@ -58,12 +86,9 @@ const recentFiles = [
 const LandingPage = () => {
   const { isOpen, open, close } = preview();
   const createNotebook = useNoteBookStorage((state) => state.createNotebook);
-  const router = useRouter();
 
-  const handleCreateNotebook = () => {
-    const id = createNotebook(); // stores it in Zustand, returns the new id
-    router.push(`/notebook/${id}`); // navigate straight into it
-  };
+
+
 
   return (
     <div className="w-full min-h-screen max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">

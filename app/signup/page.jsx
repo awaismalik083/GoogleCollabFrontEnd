@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Router } from "lucide-react";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
@@ -9,6 +11,8 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,6 +24,7 @@ export default function SignupPage() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: "include", // added — required to receive the cookie
           body: JSON.stringify({ username: name, email, password }),
         },
       );
@@ -31,9 +36,8 @@ export default function SignupPage() {
         return;
       }
 
-      localStorage.setItem("token", data.token);
       console.log("Signup successful:", data);
-      // router.push("/dashboard") if you're using next/navigation
+      router.push("/");
     } catch (err) {
       setErrors("Network error — please try again");
       console.error(err);
@@ -41,7 +45,6 @@ export default function SignupPage() {
       setLoading(false);
     }
   };
-
   return (
     <main className="flex p-5 min-h-screen items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-sm ring-1 ring-gray-100">
@@ -59,10 +62,22 @@ export default function SignupPage() {
           className="flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
         >
           <svg className="h-5 w-5" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.2-2.27H12v4.3h6.47a5.53 5.53 0 0 1-2.4 3.63v3h3.88c2.27-2.09 3.54-5.17 3.54-8.66z" />
-            <path fill="#34A853" d="M12 24c3.24 0 5.96-1.07 7.95-2.9l-3.88-3c-1.08.72-2.46 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.27v3.09A11.99 11.99 0 0 0 12 24z" />
-            <path fill="#FBBC05" d="M5.27 14.3a7.2 7.2 0 0 1 0-4.6V6.61H1.27a12 12 0 0 0 0 10.78l4-3.09z" />
-            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.69 1.27 6.61l4 3.09C6.22 6.86 8.87 4.75 12 4.75z" />
+            <path
+              fill="#4285F4"
+              d="M23.49 12.27c0-.79-.07-1.54-.2-2.27H12v4.3h6.47a5.53 5.53 0 0 1-2.4 3.63v3h3.88c2.27-2.09 3.54-5.17 3.54-8.66z"
+            />
+            <path
+              fill="#34A853"
+              d="M12 24c3.24 0 5.96-1.07 7.95-2.9l-3.88-3c-1.08.72-2.46 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.27v3.09A11.99 11.99 0 0 0 12 24z"
+            />
+            <path
+              fill="#FBBC05"
+              d="M5.27 14.3a7.2 7.2 0 0 1 0-4.6V6.61H1.27a12 12 0 0 0 0 10.78l4-3.09z"
+            />
+            <path
+              fill="#EA4335"
+              d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.69 1.27 6.61l4 3.09C6.22 6.86 8.87 4.75 12 4.75z"
+            />
           </svg>
           Continue with Google
         </button>
@@ -95,7 +110,10 @@ export default function SignupPage() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="email" className="text-sm font-medium text-gray-700">
+            <label
+              htmlFor="email"
+              className="text-sm font-medium text-gray-700"
+            >
               Email
             </label>
             <input
@@ -109,7 +127,10 @@ export default function SignupPage() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="password" className="text-sm font-medium text-gray-700">
+            <label
+              htmlFor="password"
+              className="text-sm font-medium text-gray-700"
+            >
               Password
             </label>
             <input
@@ -133,7 +154,10 @@ export default function SignupPage() {
 
         <p className="mt-6 text-center text-sm text-gray-500">
           Already have an account?{" "}
-          <Link href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+          <Link
+            href="/Login"
+            className="font-medium text-indigo-600 hover:text-indigo-500"
+          >
             Log in
           </Link>
         </p>
