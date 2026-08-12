@@ -9,9 +9,10 @@ import NotebookManager from "./NotebookManager";
 
 const handleCreateNotebook = async () => {
   const token = localStorage.getItem("token");
+  console.log("token",token)
 
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/notebooks`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/notebook/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -29,7 +30,9 @@ const handleCreateNotebook = async () => {
     const data = await res.json();
     const id = data.notebook.id; // matches your controller's response shape
 
+    console.log('Redirecting User....')
     router.push(`/notebook/${id}`);
+    console.log("User redirected")
   } catch (error) {
     console.error("Error creating notebook:", error);
   }

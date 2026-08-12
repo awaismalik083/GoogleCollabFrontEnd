@@ -5,40 +5,39 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, seterrors] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const router = useRouter();
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  seterrors("");
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ email, password }),
-    });
+    e.preventDefault();
+    setLoading(true);
+    seterrors("");
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email, password }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (!res.ok) {
-      seterrors(data.message || "Something went wrong");
-      return;
+      if (!res.ok) {
+        seterrors(data.message || "Something went wrong");
+        return;
+      }
+console.log("Redirecting my user .....")
+      router.push("/");
+      console.log("user redirected/.")
+    } catch (err) {
+      seterrors("Network error — please try again");
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
-
-    console.log("Login Successfully", data);
-    router.push("/");
-  } catch (err) {
-    seterrors("Network error — please try again");
-    console.error(err);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <main className="flex p-5 min-h-screen items-center justify-center bg-gray-50 px-4">
@@ -124,7 +123,7 @@ export default function LoginPage() {
 
           <div className="flex justify-end">
             <Link
-              href="/forgot-password"
+              href="/forgotPassword"
               className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
             >
               Forgot password?
