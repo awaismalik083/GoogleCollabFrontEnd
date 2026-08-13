@@ -6,37 +6,11 @@ import { GoUpload, GoFileDirectory } from "react-icons/go";
 import { SiGoogledrive, SiGithub } from "react-icons/si";
 import { preview, useNoteBookStorage } from "../Context/PreviewContext";
 import NotebookManager from "./NotebookManager";
+import { UserPen } from "lucide-react";
 
-const handleCreateNotebook = async () => {
-  const token = localStorage.getItem("token");
-  console.log("token",token)
 
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/notebook/create`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ title: "Untitled Notebook" }),
-    });
 
-    if (!res.ok) {
-      const errData = await res.json();
-      console.error("Failed to create notebook:", errData.message);
-      return;
-    }
 
-    const data = await res.json();
-    const id = data.notebook.id; // matches your controller's response shape
-
-    console.log('Redirecting User....')
-    router.push(`/notebook/${id}`);
-    console.log("User redirected")
-  } catch (error) {
-    console.error("Error creating notebook:", error);
-  }
-};
 
 const exampleNotebooks = [
   {
@@ -87,8 +61,40 @@ const recentFiles = [
 ];
 
 const LandingPage = () => {
+
   const { isOpen, open, close } = preview();
-  const createNotebook = useNoteBookStorage((state) => state.createNotebook);
+  const router = useRouter();
+
+    const handleCreateNotebook = async () => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/notebook/create`,
+      {
+        method: "POST",
+        credentials: "include", // sends the httpOnly cookie automatically
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title: "Untitled Notebook" }),
+      },
+    );
+
+    if (!res.ok) {
+      const errData = await res.json();
+      console.error("Failed to create notebook:", errData.message);
+      return;
+    }
+
+    const data = await res.json();
+    const id = data.notebook.id;
+
+    console.log("Notebook Created", data);
+    router.push(`/notebook/${id}`);
+    console.log("User redirecting to the coding page");
+  } catch (error) {
+    console.error("Error creating notebook:", error);
+  }
+};
 
 
 

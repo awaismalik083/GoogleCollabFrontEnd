@@ -1,26 +1,61 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import NoteBookCode from "../../Components/NoteBookCode";
 import Sidebar from "../../Components/Sidebar";
 import CodeNavbar from "../../Components/CodeNavbar";
 import AssistantRightbar from "../../Components/AssistantRightbar";
-import { useNotebookStore, useNoteBookStorage } from "../../Context/PreviewContext";
+import { useNotebookStore } from "../../Context/PreviewContext";
 import MiniRighbar from "../../Components/MiniRighbar";
 
 const NotebookPage = () => {
-  const { id } = useParams(); // grabs the [id] segment from the URL
+  const { id } = useParams();
   const { isOpen } = useNotebookStore();
-  const getNotebook = useNoteBookStorage((state) => state.getNotebook);
-  const setActiveNotebook = useNoteBookStorage((state) => state.setActiveNotebook);
 
-  const notebook = getNotebook(id);
+  const [notebook, setNotebook] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    if (id) setActiveNotebook(id);
-  }, [id, setActiveNotebook]);
+    if (!id) return;
 
-  if (!notebook) {
+    const fetchNotebook = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/notebook/${id}`,
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+
+        if (!res.ok) {
+          setError(true);
+          return;
+        }
+
+        const data = await res.json();
+        setNotebook(data.notebook);
+      } catch (err) {
+        console.error("Error fetching notebook:", err);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNotebook();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen text-gray-500">
+        Loading...
+      </div>
+    );
+  }
+
+  if (error || !notebook) {
     return (
       <div className="flex items-center justify-center h-screen text-gray-500">
         Notebook not found.
