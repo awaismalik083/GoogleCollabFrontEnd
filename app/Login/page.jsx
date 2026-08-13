@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useAuth } from "../Context/AuthContext";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -10,6 +11,7 @@ export default function LoginPage() {
   const [errors, seterrors] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { setUser } = useAuth();
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -28,9 +30,15 @@ export default function LoginPage() {
         seterrors(data.message || "Something went wrong");
         return;
       }
-console.log("Redirecting my user .....")
-      router.push("/");
-      console.log("user redirected/.")
+      console.log("Login Successfully", data);
+
+      if (data.success) {
+        setUser(data.user);
+
+        console.log("Redirecting my user .....");
+
+        router.push("/");
+      }
     } catch (err) {
       seterrors("Network error — please try again");
       console.error(err);

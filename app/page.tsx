@@ -1,16 +1,12 @@
-import React from "react";
 import LandingPage from "./Components/LandingPage";
 import Navbar from "./Components/Navbar";
-import NotebookManager from "./Components/NotebookManager";
+import ProtectedRoute from "./Components/ProtectedRoute";
 
-const page = () => {
+export default function Page() {
   return (
-    <>
+    <ProtectedRoute>
       <Navbar />
       <LandingPage />
-      
-    </>
+    </ProtectedRoute>
   );
-};
-
-export default page;
+}
